@@ -28,4 +28,5 @@ h2 {
 .center { 
   -webkit-align-items: center; 
   align-items: center; 
+  justify-content: center;
 }
