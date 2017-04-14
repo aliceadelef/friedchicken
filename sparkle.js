@@ -9,7 +9,7 @@
       lifespan: 1000,
       radius: 300,
       sprite_size: 10,
-      image: 'IMG_1531.JPG',
+      shape: 'circle',
       gravity: 'false',
     }
 
