@@ -14,27 +14,28 @@ body {
 }
 
 h2 {
-    padding: 5%;
+    padding: 6%;
     text-align: center;
     width: 100%;
-    height: 40%;
+    height: 13%;
+    font-size: 1.9em;
     color: white
 }
 
-.box {
-  height: 60%;
-  width:  100%;
-}
-
-h1 { 
+ h1 { 
     font-family: Montez; 
-    font-size: 4.9em; 
+    font-size: 7.9em; 
     font-weight: 300; 
     margin: 0 0.3em; 
     color: #ff0080; 
     text-align: center;
     text-shadow: 0 2px 1px black;
-}
+  }
+
+ div {
+   height: 30%;
+ }
+
 
 
 
