@@ -1,246 +1,368 @@
-$(function() {  
-  // here we create fuscia sparkles
-  $("h1").sparkleh({
-    count: 80,
-    color: ["#ff0080","#ff0080","#0000FF"]
+(function($){
+  'use strict';
+
+  $.fn.sparkleHover = function (opts){
+
+    var defaultOptions = {
+      colors : ['#2DE7F0', '#FA5C46'],
+      num_sprites: 22,
+      lifespan: 1000,
+      radius: 300,
+      sprite_size: 10,
+      image: 'IMG_1531.JPG',
+      gravity: 'false',
+    }
+
+
+
+    var opts = $.extend({}, defaultOptions, opts);
+
+
+    var $target = this,
+    num_sprites = opts.num_sprites,
+    colors = opts.colors,
+    allSprites = [],
+    radius = opts.radius,
+    sprite_size = opts.sprite_size,
+    shape = opts.shape.toLowerCase(),
+    gravity = opts.gravity,
+    image = opts.image,
+    lifespan = opts.lifespan,
+    fadetoOpacity = 100;
+
+    //on hover of this,
+  $target.mouseenter( function(){
+
+      if (gravity == "true"){
+        var centerX = $(this).width()/2 + $(this).offset().left;
+        var centerY = $(this).offset().top;
+      } else {
+        var centerX = $(this).width()/2 + $(this).offset().left;
+        var centerY = $(this).offset().top+ $(this).height()/2;
+      }
+
+      makeSprites(centerX, centerY)
+
+
   });
+
+  function makeSprites(centerX, centerY){
+    for (var i=0; i < num_sprites; i++){
+      //make a div
+      var newsprite = document.createElement('div');
+      var rotateDeg = Math.random()*360
+
+      if (gravity == "true" || gravity == true){
+        var radSpread = Math.random() * (radius*2 - radius/4) + radius/4
+
+      } else {
+        var radSpread = Math.random() * (radius + radius) -radius
+      }
+
+      if (image){
+
+        $(newsprite).css({
+          "background-size":"contain",
+          backgroundImage: "url("+image+")"
+        });
+
+      };
+
+      //give the div css, based on client's parameters
+      if (shape == 'circle'){
+
+      $(newsprite).css({
+          backgroundColor: colors[i % colors.length],
+          left: centerX,
+          top: centerY,
+          width: sprite_size,
+          height: sprite_size,
+          borderRadius: "100%",
+          position: "absolute"
+
+        });
+
+      } else if (shape == 'square'){
+        $(newsprite).css({
+            backgroundColor: colors[i % colors.length],
+            left: centerX,
+            top: centerY,
+            width: sprite_size,
+            height: sprite_size,
+            borderRadius: "0px",
+            position: "absolute"
+          });
+
+      } else if (shape == "triangle"){
+        fadetoOpacity = 0;
+
+        $(newsprite).css({
+            width: '0px',
+            height: '0px',
+            "border-top": sprite_size + "px solid transparent",
+            "border-right": sprite_size+ "px solid transparent",
+
+            "border-top":sprite_size +"px solid "+ colors[i % colors.length],
+
+            left: centerX,
+            top: centerY,
+
+            position: "absolute",
+            "-webkit-transform": "rotate("+rotateDeg+"deg)",
+            "-moz-transform": "rotate("+rotateDeg+"deg)",
+            "-o-transform": "rotate("+rotateDeg+"deg)",
+            "-ms-transform": "rotate("+rotateDeg+"deg)",
+            "transform": "rotate("+rotateDeg+"deg)"
+          });
+
+      } else {
+        if (i==0){
+
+          console.log("the shape chosen on this object is invalid. Try 'circle', 'triangle', or 'square'")
+
+        }
+
+      }
+
+
+
+        $(newsprite).animate({
+          opacity: [ fadetoOpacity, "swing" ],
+          left : centerX + Math.random() * (radius + radius) -radius,
+          top : centerY + radSpread,
+          width: [0,"easeInQuart"],
+          height: [0,"easeInQuart"]
+        }, lifespan, 'easeOutQuad' ,function() {
+
+          document.body.removeChild(this)
+
+
+        });
+
+      document.body.appendChild(newsprite);
+
+    }
+
+
+  }
+
+
+
+
+
+ return $target;
+
+  }
+
+
+
+}) (jQuery);
+
+
+
+
+/*
+ * jQuery Easing v1.3 - http://gsgd.co.uk/sandbox/jquery/easing/
+ *
+ * Uses the built in easing capabilities added In jQuery 1.1
+ * to offer multiple easing options
+ *
+ * TERMS OF USE - jQuery Easing
+ *
+ * Open source under the BSD License.
+ *
+ * Copyright © 2008 George McGinley Smith
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this list of
+ * conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice, this list
+ * of conditions and the following disclaimer in the documentation and/or other materials
+ * provided with the distribution.
+ *
+ * Neither the name of the author nor the names of contributors may be used to endorse
+ * or promote products derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ *  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ *  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+ *  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+ * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+*/
+
+// t: current time, b: begInnIng value, c: change In value, d: duration
+jQuery.easing['jswing'] = jQuery.easing['swing'];
+
+jQuery.extend( jQuery.easing,
+{
+	def: 'easeOutQuad',
+	swing: function (x, t, b, c, d) {
+		//alert(jQuery.easing.default);
+		return jQuery.easing[jQuery.easing.def](x, t, b, c, d);
+	},
+	easeInQuad: function (x, t, b, c, d) {
+		return c*(t/=d)*t + b;
+	},
+	easeOutQuad: function (x, t, b, c, d) {
+		return -c *(t/=d)*(t-2) + b;
+	},
+	easeInOutQuad: function (x, t, b, c, d) {
+		if ((t/=d/2) < 1) return c/2*t*t + b;
+		return -c/2 * ((--t)*(t-2) - 1) + b;
+	},
+	easeInCubic: function (x, t, b, c, d) {
+		return c*(t/=d)*t*t + b;
+	},
+	easeOutCubic: function (x, t, b, c, d) {
+		return c*((t=t/d-1)*t*t + 1) + b;
+	},
+	easeInOutCubic: function (x, t, b, c, d) {
+		if ((t/=d/2) < 1) return c/2*t*t*t + b;
+		return c/2*((t-=2)*t*t + 2) + b;
+	},
+	easeInQuart: function (x, t, b, c, d) {
+		return c*(t/=d)*t*t*t + b;
+	},
+	easeOutQuart: function (x, t, b, c, d) {
+		return -c * ((t=t/d-1)*t*t*t - 1) + b;
+	},
+	easeInOutQuart: function (x, t, b, c, d) {
+		if ((t/=d/2) < 1) return c/2*t*t*t*t + b;
+		return -c/2 * ((t-=2)*t*t*t - 2) + b;
+	},
+	easeInQuint: function (x, t, b, c, d) {
+		return c*(t/=d)*t*t*t*t + b;
+	},
+	easeOutQuint: function (x, t, b, c, d) {
+		return c*((t=t/d-1)*t*t*t*t + 1) + b;
+	},
+	easeInOutQuint: function (x, t, b, c, d) {
+		if ((t/=d/2) < 1) return c/2*t*t*t*t*t + b;
+		return c/2*((t-=2)*t*t*t*t + 2) + b;
+	},
+	easeInSine: function (x, t, b, c, d) {
+		return -c * Math.cos(t/d * (Math.PI/2)) + c + b;
+	},
+	easeOutSine: function (x, t, b, c, d) {
+		return c * Math.sin(t/d * (Math.PI/2)) + b;
+	},
+	easeInOutSine: function (x, t, b, c, d) {
+		return -c/2 * (Math.cos(Math.PI*t/d) - 1) + b;
+	},
+	easeInExpo: function (x, t, b, c, d) {
+		return (t==0) ? b : c * Math.pow(2, 10 * (t/d - 1)) + b;
+	},
+	easeOutExpo: function (x, t, b, c, d) {
+		return (t==d) ? b+c : c * (-Math.pow(2, -10 * t/d) + 1) + b;
+	},
+	easeInOutExpo: function (x, t, b, c, d) {
+		if (t==0) return b;
+		if (t==d) return b+c;
+		if ((t/=d/2) < 1) return c/2 * Math.pow(2, 10 * (t - 1)) + b;
+		return c/2 * (-Math.pow(2, -10 * --t) + 2) + b;
+	},
+	easeInCirc: function (x, t, b, c, d) {
+		return -c * (Math.sqrt(1 - (t/=d)*t) - 1) + b;
+	},
+	easeOutCirc: function (x, t, b, c, d) {
+		return c * Math.sqrt(1 - (t=t/d-1)*t) + b;
+	},
+	easeInOutCirc: function (x, t, b, c, d) {
+		if ((t/=d/2) < 1) return -c/2 * (Math.sqrt(1 - t*t) - 1) + b;
+		return c/2 * (Math.sqrt(1 - (t-=2)*t) + 1) + b;
+	},
+	easeInElastic: function (x, t, b, c, d) {
+		var s=1.70158;var p=0;var a=c;
+		if (t==0) return b;  if ((t/=d)==1) return b+c;  if (!p) p=d*.3;
+		if (a < Math.abs(c)) { a=c; var s=p/4; }
+		else var s = p/(2*Math.PI) * Math.asin (c/a);
+		return -(a*Math.pow(2,10*(t-=1)) * Math.sin( (t*d-s)*(2*Math.PI)/p )) + b;
+	},
+	easeOutElastic: function (x, t, b, c, d) {
+		var s=1.70158;var p=0;var a=c;
+		if (t==0) return b;  if ((t/=d)==1) return b+c;  if (!p) p=d*.3;
+		if (a < Math.abs(c)) { a=c; var s=p/4; }
+		else var s = p/(2*Math.PI) * Math.asin (c/a);
+		return a*Math.pow(2,-10*t) * Math.sin( (t*d-s)*(2*Math.PI)/p ) + c + b;
+	},
+	easeInOutElastic: function (x, t, b, c, d) {
+		var s=1.70158;var p=0;var a=c;
+		if (t==0) return b;  if ((t/=d/2)==2) return b+c;  if (!p) p=d*(.3*1.5);
+		if (a < Math.abs(c)) { a=c; var s=p/4; }
+		else var s = p/(2*Math.PI) * Math.asin (c/a);
+		if (t < 1) return -.5*(a*Math.pow(2,10*(t-=1)) * Math.sin( (t*d-s)*(2*Math.PI)/p )) + b;
+		return a*Math.pow(2,-10*(t-=1)) * Math.sin( (t*d-s)*(2*Math.PI)/p )*.5 + c + b;
+	},
+	easeInBack: function (x, t, b, c, d, s) {
+		if (s == undefined) s = 1.70158;
+		return c*(t/=d)*t*((s+1)*t - s) + b;
+	},
+	easeOutBack: function (x, t, b, c, d, s) {
+		if (s == undefined) s = 1.70158;
+		return c*((t=t/d-1)*t*((s+1)*t + s) + 1) + b;
+	},
+	easeInOutBack: function (x, t, b, c, d, s) {
+		if (s == undefined) s = 1.70158;
+		if ((t/=d/2) < 1) return c/2*(t*t*(((s*=(1.525))+1)*t - s)) + b;
+		return c/2*((t-=2)*t*(((s*=(1.525))+1)*t + s) + 2) + b;
+	},
+	easeInBounce: function (x, t, b, c, d) {
+		return c - jQuery.easing.easeOutBounce (x, d-t, 0, c, d) + b;
+	},
+	easeOutBounce: function (x, t, b, c, d) {
+		if ((t/=d) < (1/2.75)) {
+			return c*(7.5625*t*t) + b;
+		} else if (t < (2/2.75)) {
+			return c*(7.5625*(t-=(1.5/2.75))*t + .75) + b;
+		} else if (t < (2.5/2.75)) {
+			return c*(7.5625*(t-=(2.25/2.75))*t + .9375) + b;
+		} else {
+			return c*(7.5625*(t-=(2.625/2.75))*t + .984375) + b;
+		}
+	},
+	easeInOutBounce: function (x, t, b, c, d) {
+		if (t < d/2) return jQuery.easing.easeInBounce (x, t*2, 0, c, d) * .5 + b;
+		return jQuery.easing.easeOutBounce (x, t*2-d, 0, c, d) * .5 + c*.5 + b;
+	}
 });
 
-$.fn.sparkleh = function( options ) {
-    
-  return this.each( function(k,v) {
-    
-    var $this = $(v).css("position","relative");
-    
-    var settings = $.extend({
-      width: $this.outerWidth(),
-      height: $this.outerHeight(),
-      color: "#FFFFFF",
-      count: 30,
-      overlap: 0,
-      speed: 1
-    }, options );
-    
-    var sparkle = new Sparkle( $this, settings );
-    
-    $this.on({
-      "mouseover focus" : function(e) {
-        sparkle.over();
-      },
-      "mouseout blur" : function(e) {
-        sparkle.out();
-      }
-    });
-    
-  });
-  
-}
-
-function Sparkle( $parent, options ) {
-  this.options = options;
-  this.init( $parent );
-}
-
-Sparkle.prototype = {
-  
-  "init" : function( $parent ) {
-    
-    var _this = this;
-    
-    this.$canvas = 
-      $("<canvas>")
-        .addClass("sparkle-canvas")
-        .css({
-          position: "absolute",
-          top: "-"+_this.options.overlap+"px",
-          left: "-"+_this.options.overlap+"px",
-          "pointer-events": "none"
-        })
-        .appendTo($parent);
-    
-    this.canvas = this.$canvas[0];
-    this.context = this.canvas.getContext("2d");
-    
-    this.sprite = new Image();
-    this.sprites = [0,6,13,20];
-    this.sprite.src = this.datauri;
-    
-    this.canvas.width = this.options.width + ( this.options.overlap * 2);
-    this.canvas.height = this.options.height + ( this.options.overlap * 2);
-    
-    
-    this.particles = this.createSparkles( this.canvas.width , this.canvas.height );
-    
-    this.anim = null;
-    this.fade = false;
-    
-  },
-  
-  "createSparkles" : function( w , h ) {
-    
-    var holder = [];
-    
-    for( var i = 0; i < this.options.count; i++ ) {
-      
-      var color = this.options.color;
-      
-      if( this.options.color == "rainbow" ) {
-        color = '#'+ ('000000' + Math.floor(Math.random()*16777215).toString(16)).slice(-6);
-      } else if( $.type(this.options.color) === "array" ) {
-        color = this.options.color[ Math.floor(Math.random()*this.options.color.length) ];
-      }
-
-      holder[i] = {
-        position: {
-          x: Math.floor(Math.random()*w),
-          y: Math.floor(Math.random()*h)
-        },
-        style: this.sprites[ Math.floor(Math.random()*4) ],
-        delta: {
-          x: Math.floor(Math.random() * 1000) - 500,
-          y: Math.floor(Math.random() * 1000) - 500
-        },
-        size: parseFloat((Math.random()*2).toFixed(2)),
-        color: color
-      };
-            
-    }
-    
-    return holder;
-    
-  },
-  
-  "draw" : function( time, fade ) {
-        
-    var ctx = this.context;
-    
-    ctx.clearRect( 0, 0, this.canvas.width, this.canvas.height );
-          
-    for( var i = 0; i < this.options.count; i++ ) {
-
-      var derpicle = this.particles[i];
-      var modulus = Math.floor(Math.random()*7);
-      
-      if( Math.floor(time) % modulus === 0 ) {
-        derpicle.style = this.sprites[ Math.floor(Math.random()*4) ];
-      }
-      
-      ctx.save();
-      ctx.globalAlpha = derpicle.opacity;
-      ctx.drawImage(this.sprite, derpicle.style, 0, 7, 7, derpicle.position.x, derpicle.position.y, 7, 7);
-      
-      if( this.options.color ) {  
-        
-        ctx.globalCompositeOperation = "source-atop";
-        ctx.globalAlpha = 0.5;
-        ctx.fillStyle = derpicle.color;
-        ctx.fillRect(derpicle.position.x, derpicle.position.y, 7, 7);
-        
-      }
-      
-      ctx.restore();
-
-    }
-    
-        
-  },
-  
-  "update" : function() {
-    
-     var _this = this;
-    
-     this.anim = window.requestAnimationFrame( function(time) {
-
-       for( var i = 0; i < _this.options.count; i++ ) {
-
-         var u = _this.particles[i];
-         
-         var randX = ( Math.random() > Math.random()*2 );
-         var randY = ( Math.random() > Math.random()*3 );
-         
-         if( randX ) {
-           u.position.x += ((u.delta.x * _this.options.speed) / 1500); 
-         }        
-         
-         if( !randY ) {
-           u.position.y -= ((u.delta.y * _this.options.speed) / 800);
-         }
-
-         if( u.position.x > _this.canvas.width ) {
-           u.position.x = -7;
-         } else if ( u.position.x < -7 ) {
-           u.position.x = _this.canvas.width; 
-         }
-
-         if( u.position.y > _this.canvas.height ) {
-           u.position.y = -7;
-           u.position.x = Math.floor(Math.random()*_this.canvas.width);
-         } else if ( u.position.y < -7 ) {
-           u.position.y = _this.canvas.height; 
-           u.position.x = Math.floor(Math.random()*_this.canvas.width);
-         }
-         
-         if( _this.fade ) {
-           u.opacity -= 0.02;
-         } else {
-           u.opacity -= 0.005;
-         }
-         
-         if( u.opacity <= 0 ) {
-           u.opacity = ( _this.fade ) ? 0 : 1;
-         }
-         
-       }
-       
-       _this.draw( time );
-       
-       if( _this.fade ) {
-         _this.fadeCount -= 1;
-         if( _this.fadeCount < 0 ) {
-           window.cancelAnimationFrame( _this.anim );
-         } else {
-           _this.update(); 
-         }
-       } else {
-         _this.update();
-       }
-       
-     });
-
-  },
-  
-  "cancel" : function() {
-    
-    this.fadeCount = 100;
-
-  },
-  
-  "over" : function() {
-    
-    window.cancelAnimationFrame( this.anim );
-    
-    for( var i = 0; i < this.options.count; i++ ) {
-      this.particles[i].opacity = Math.random();
-    }
-    
-    this.fade = false;
-    this.update();
-
-  },
-  
-  "out" : function() {
-    
-    this.fade = true;
-    this.cancel();
-    
-  },
-  
-  
-  
-  "datauri" : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABsAAAAHCAYAAAD5wDa1AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozNDNFMzM5REEyMkUxMUUzOEE3NEI3Q0U1QUIzMTc4NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozNDNFMzM5RUEyMkUxMUUzOEE3NEI3Q0U1QUIzMTc4NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjM0M0UzMzlCQTIyRTExRTM4QTc0QjdDRTVBQjMxNzg2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjM0M0UzMzlDQTIyRTExRTM4QTc0QjdDRTVBQjMxNzg2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+jzOsUQAAANhJREFUeNqsks0KhCAUhW/Sz6pFSc1AD9HL+OBFbdsVOKWLajH9EE7GFBEjOMxcUNHD8dxPBCEE/DKyLGMqraoqcd4j0ChpUmlBEGCFRBzH2dbj5JycJAn90CEpy1J2SK4apVSM4yiKonhePYwxMU2TaJrm8BpykpWmKQ3D8FbX9SOO4/tOhDEG0zRhGAZo2xaiKDLyPGeSyPM8sCxr868+WC/mvu9j13XBtm1ACME8z7AsC/R9r0fGOf+arOu6jUwS7l6tT/B+xo+aDFRo5BykHfav3/gSYAAtIdQ1IT0puAAAAABJRU5ErkJggg=="
-
-}; 
-
-
-
-
+/*
+ *
+ * TERMS OF USE - EASING EQUATIONS
+ *
+ * Open source under the BSD License.
+ *
+ * Copyright © 2001 Robert Penner
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this list of
+ * conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice, this list
+ * of conditions and the following disclaimer in the documentation and/or other materials
+ * provided with the distribution.
+ *
+ * Neither the name of the author nor the names of contributors may be used to endorse
+ * or promote products derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ *  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ *  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+ *  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+ * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
