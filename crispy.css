@@ -4,6 +4,7 @@ html {
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
+  height: 100%;
 }
 
 body {
@@ -12,23 +13,26 @@ body {
 }
 
 h2 {
+    padding: 5%;
     text-align: center;
     width: 100%;
-    height: 100%;
+    height: 40%;
     color: white
 }
 
-.flex-container {
-  width: 100%;
-  height: 100%;
-  padding: 5%;
+.box {
+  height: 60%;
+  width:  100%;
 }
 
-.center { 
-  align-items: center; 
-  justify-content: center;
-  text-align: center;
-}
+ h1 { 
+    font-family: Montez; 
+    font-size: 4.9em; 
+    font-weight: 300; 
+    margin: 0 0.3em; 
+    color: #ff0080; 
+    text-align: center;
+  }
 
 @import url(https://fonts.googleapis.com/css?family=Lato:400,900|Montez);
 
@@ -58,16 +62,4 @@ $buttonColor: rgba(255,255,255,1);
   }
   
 }
-.box {
-  color: white;
-  height: 32px;
-  width:  38px;
-}
 
- h1 { 
-    font-family: Montez; 
-    font-size: 1.9em; 
-    font-weight: 300; 
-    margin: 0 0.3em; 
-    color: #ff0080; 
-  }
